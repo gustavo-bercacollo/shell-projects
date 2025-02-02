@@ -1,0 +1,55 @@
+#!/bin/bash
+
+echo "Bem-vindo"
+
+# Solicitar o nome
+read -p "Digite seu nome: " NOME
+
+# Solicitar a data de nascimento
+read -p "$NOME, bem-vindo! Agora digite a sua data de nascimento (DD/MM/AAAA): " DATA
+
+# Solicitar a data de nascimento com validação
+if [[ ! $DATA =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
+  echo "Erro: A data inserida não está no formato correto (DD/MM/AAAA)."
+  exit 1
+fi
+
+# Extrair o ano, mês e dia de nascimento
+ANO_NASCIMENTO=$(echo $DATA | cut -d "/" -f3)
+MES_NASCIMENTO=$(echo $DATA | cut -d "/" -f2)
+DIA_NASCIMENTO=$(echo $DATA | cut -d "/" -f1)
+
+# Obter a data atual
+ANO_ATUAL=$(date +%Y)
+MES_ATUAL=$(date +%m)
+DIA_ATUAL=$(date +%d)
+
+# Calcular a idade em anos
+IDADE=$((ANO_ATUAL - ANO_NASCIMENTO))
+
+# Ajustar a idade se o aniversário ainda não aconteceu no ano atual
+if [[ $MES_NASCIMENTO -gt $MES_ATUAL || ($MES_NASCIMENTO -eq $MES_ATUAL && $DIA_NASCIMENTO -gt $DIA_ATUAL) ]]; then
+  IDADE=$((IDADE - 1))
+fi
+
+# Calcular o total de meses
+TOTAL_MESES=$(( IDADE * 12 + (MES_ATUAL - MES_NASCIMENTO) ))
+
+# Calcular o total de semanas (usando 4.345 semanas/mês)
+TOTAL_SEMANAS=$(awk "BEGIN {printf \"%.0f\", $TOTAL_MESES * 4.345}")
+
+# Calcular o total de dias
+DIAS_ANOS=$((IDADE * 365))  # Total de dias nos anos completos
+DIAS_MESES=$(awk "BEGIN {printf \"%.0f\", ($MES_ATUAL - $MES_NASCIMENTO) * 30.4375}") # Média de 30.4375 dias/mês
+DIAS_TOTAL=$((DIAS_ANOS + DIAS_MESES + (DIA_ATUAL - DIA_NASCIMENTO)))
+
+# Códigos de cor ANSI
+COR_IDADE="\033[38;2;22;196;127m" # Cor #16C47F (verde)
+COR_MESES="\033[38;2;255;214;90m" # Cor #FFD65A (amarelo claro)
+COR_SEMANAS="\033[38;2;255;157;35m" # Cor #FF9D23 (laranja)
+COR_DIAS="\033[38;2;72;118;255m" # Cor #4876FF (azul claro)
+RESET="\033[0m"                   # Reset de cor
+
+# Exibir a mensagem final com as cores
+echo -e "$NOME, você viveu ${COR_IDADE}$IDADE anos${RESET}, ${COR_MESES}$TOTAL_MESES meses${RESET}, ${COR_SEMANAS}$TOTAL_SEMANAS semanas${RESET}, e ${COR_DIAS}$DIAS_TOTAL dias${RESET}! ;-)"
+

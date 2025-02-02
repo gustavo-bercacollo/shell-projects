@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# Pergunta qual é o sistema operacional do usuário
+echo -e "Qual é o seu sistema operacional?\n1 - Windows\n2 - Linux\n3 - MacOS\n"
+read -p "Digite o número correspondente: " SISTEMA_OPERACIONAL
+
+# Processa a escolha do sistema operacional
+case $SISTEMA_OPERACIONAL in
+1) # Windows
+  echo -e "\n1 - Desligar em um horário específico"
+  echo -e "2 - Desligar após um período de tempo\n"
+
+  read -p "Digite sua escolha (1 ou 2): " OPCAO
+
+  case $OPCAO in
+    1) # Desligar em um horário específico
+      read -p "Digite o horário de desligamento (HH:MM): " HORARIO_DESLIGAMENTO
+      ATUAL=$(date +"%H:%M")
+      SEGUNDOS_ATUAL=$(date +%s)
+      SEGUNDOS_DESTINO=$(date -d "$HORARIO_DESLIGAMENTO" +%s)
+      DIFERENCA=$(( SEGUNDOS_DESTINO - SEGUNDOS_ATUAL ))
+
+      if [ $DIFERENCA -gt 0 ]; then
+        shutdown -s -t $DIFERENCA
+        echo "Desligamento programado para $HORARIO_DESLIGAMENTO."
+        echo "Deseja cancelar o desligamento? (sim/não)"
+        read CANCELAR
+        if [[ "$CANCELAR" == "sim" ]]; then
+          shutdown -a
+          echo "Desligamento cancelado."
+        fi
+      else
+        echo "O horário inserido já passou. Tente novamente."
+      fi
+      ;;
+
+    2) # Desligar após um período de tempo
+      read -p "Em quantos minutos você gostaria de desligar seu computador? " TEMPO_DESLIGAMENTO
+      SEGUNDOS=$((TEMPO_DESLIGAMENTO * 60))
+      shutdown -s -t $SEGUNDOS
+      echo "Desligamento programado para daqui a $TEMPO_DESLIGAMENTO minutos."
+      echo "Deseja cancelar o desligamento? (sim/não)"
+      read CANCELAR
+      if [[ "$CANCELAR" == "sim" ]]; then
+        shutdown -a
+        echo "Desligamento cancelado."
+      fi
+      ;;
+
+    *)
+      echo "Opção inválida. Execute o script novamente."
+      ;;
+  esac
+  ;;
+
+2|3) # Linux ou MacOS
+  # Definindo cores para melhor visualização
+  AZUL="\033[34m"    # Azul
+  VERMELHO="\033[31m"  # Vermelho
+  RESETAR="\033[0m"    # Reseta para a cor padrão
+
+  echo -e "${AZUL}1${RESETAR} - Desligar em um horário específico"
+  echo -e "${VERMELHO}2${RESETAR} - Desligar após um período de tempo\n"
+
+  read -p "Digite sua escolha (${AZUL}1${RESETAR} ou ${VERMELHO}2${RESETAR}): " OPCAO
+
+  case $OPCAO in
+    1) # Desligar em um horário específico
+      read -p "Qual horário você deseja programar o desligamento do computador? (formato HH:MM) " HORARIO_DESLIGAMENTO 
+      sudo shutdown -h "$HORARIO_DESLIGAMENTO"
+      echo "Desligamento programado para $HORARIO_DESLIGAMENTO."
+      echo "Deseja cancelar o desligamento? (sim/não)"
+      read CANCELAR
+      if [[ "$CANCELAR" == "sim" ]]; then
+        sudo shutdown -c
+        echo "Desligamento cancelado."
+      fi
+      ;;
+
+    2) # Desligar após um período de tempo
+      read -p "Em quantos minutos você gostaria de desligar seu computador? " TEMPO_DESLIGAMENTO
+      sudo shutdown -h +"$TEMPO_DESLIGAMENTO"
+      echo "Desligamento programado para daqui a $TEMPO_DESLIGAMENTO minutos."
+      echo "Deseja cancelar o desligamento? (sim/não)"
+      read CANCELAR
+      if [[ "$CANCELAR" == "sim" ]]; then
+        sudo shutdown -c
+        echo "Desligamento cancelado."
+      fi
+      ;;
+
+    *)
+      echo "Opção inválida. Execute o script novamente."
+      ;;
+  esac
+  ;;
+
+*)
+  echo "Opção inválida. Execute o script novamente."
+  ;;
+esac
+
