@@ -7,7 +7,7 @@ This repository contains a collection of Shell Scripts that solve various proble
 
 - **detailed_age_calculator**: A detailed calculator to estimate age based on customized inputs.
 - **scheduled_shutdown**: A script to schedule the shutdown of the system at a specific time or after a period.
-- **gustavo**: A simple utility script designed to make everyday operations easier.
+
 
 ## How to Use
 
