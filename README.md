@@ -9,6 +9,7 @@ This repository contains a collection of Shell Scripts that solve various proble
 - **scheduled_shutdown**: A script to schedule the shutdown of the system at a specific time or after a period.
 
 - **find_max**: A script to return the largest number enter by the user.
+- **day_of_week**: This script allows the user to input a number between 1 and 7. Based on the number entered, the script returns the corresponding day of week.
 
 
 ## How to Use
